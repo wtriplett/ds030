@@ -1,0 +1,9 @@
+*.nii.gz
+*.tsv.gz
+*.gz
+derivatives
+*.gca
+launch*
+merge_events.sh
+*_merged.json
+
