@@ -1,9 +1,8 @@
 *.nii.gz
 *.tsv.gz
 *.gz
-derivatives
-*.gca
-launch*
-merge_events.sh
-*_merged.json
+derivatives/mriqcp/*/*.pdf
+derivatives/event_plots
+derivatives/parameter_plots/*.pdf
+derivatives/physio_plots
 
