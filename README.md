@@ -2,7 +2,7 @@
 
 ## Feedback and Discussion of Dataset DS000030
 
-Feedback, discussions, and comments are welcome and should be directed to the NeuroStars web site (https://neurostars.org) using the openfmri-ds030 tag. Notifications from OpenfMRI regarding dataset updates will be distributed using that method.
+Feedback, discussions, and comments are welcome. For information on how and where to discuss this data set, please see the OpenfMRI FAQ: https://openfmri.org/faq/ item "**Is there a place to discuss these datasets with the larger community?**"
 
 ## Data Organization
 
