@@ -3,6 +3,5 @@
 *.gz
 derivatives/mriqcp/*/*.pdf
 derivatives/event_plots
-derivatives/parameter_plots/*.pdf
 derivatives/physio_plots
 
