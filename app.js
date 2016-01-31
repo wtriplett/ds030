@@ -1,5 +1,5 @@
 // location of file to plot.
-var datafile_loc = 'https://github.com/wtriplett/ds030/raw/R1.0.0/derivatives/mriqcp/fMRIQC_compiled.csv';
+var datafile_loc = 'https://cdn.rawgit.com/wtriplett/ds030/R1.0.0/derivatives/mriqcp/fMRIQC_compiled.csv';
 
 // global var to hold parsed CSV data
 var parsedCSVData = null;
