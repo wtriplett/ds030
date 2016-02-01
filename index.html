@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
  <head>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.0/jquery.js"></script>
@@ -11,15 +12,14 @@
   </style>
  </head>
  <body>
-
   <div class="row">
-   <div class="col-md-10 col-md-push-2">
-    <h1>DS030 - MRIQCP Functional</h1>
-    <div id="plotContainer"></div>
-   </div>
-   <div class="col-md-2 col-md-pull-10" style="padding-top: 50px !important">
-    <p style="padding: 4pt">Select a measure to plot:</p>
+   <div class="col-md-2">
+    <p style="padding: 4pt"><strong>Select a measure to plot:</strong></p>
     <div id="buttons"></div>
+   </div>
+   <div class="col-md-10">
+    <h1 id="plotContainerTitle" style="border: 1px dotted black; background: #F4F4F4"></h1>
+    <div id="plotContainer"></div>
    </div>
   </div>
 

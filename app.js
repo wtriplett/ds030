@@ -1,5 +1,15 @@
 // location of file to plot.
-var datafile_loc = 'https://cdn.rawgit.com/wtriplett/ds030/R1.0.0/derivatives/mriqcp/fMRIQC_compiled.csv';
+//var datafile_loc = 'https://cdn.rawgit.com/wtriplett/ds030/R1.0.0/derivatives/mriqcp/fMRIQC_compiled.csv';
+var datafiles = [
+    {
+        name: 'DS030 - Anatomical MRI QC Results',
+        location: 'https://cdn.rawgit.com/wtriplett/ds030/R1.0.0/derivatives/mriqcp/aMRIQC_compiled.csv'
+    },
+    {
+        name: 'DS030 - Functional MRI QC Results',
+        location: 'https://cdn.rawgit.com/wtriplett/ds030/R1.0.0/derivatives/mriqcp/fMRIQC_compiled.csv'
+    }
+];
 
 // global var to hold parsed CSV data
 var parsedCSVData = null;
@@ -39,30 +49,33 @@ Papa.parsePromise = function(file) {
 
 // perform the paring and set up the buttons for plotting
 // columns
-Papa.parsePromise(datafile_loc).then(
-    function(results, file) {
+function loadData (dataspec) {
+    Papa.parsePromise(dataspec.location).then(
+        function(results, file) {
 
-        console.log("Parsing complete:", results, file); // hopefully.
-        parsedCSVData = results.data;
+            console.log("Parsing complete:", results, file); // hopefully.
+            parsedCSVData = results.data;
 
-        // column names
-        names = Object.keys(parsedCSVData[0]);
+            // column names
+            var names = Object.keys(parsedCSVData[0]);
 
-        // populate nav bar w/ column names
-        for (i = 0; i < names.length; i++) {
-            if (['subject', 'scan', 'session'].indexOf(names[i]) != -1)
-                continue;
-            var but = makeButton(names[i]);
-            $('#buttons').append(but);
+            $('#buttons').empty();
+            // populate nav bar w/ column names
+            for (i = 0; i < names.length; i++) {
+                if (['subject', 'scan', 'session'].indexOf(names[i]) != -1)
+                    continue;
+                $('#buttons').append(makeButton(names[i]));
+            }
+
+            $('#plotContainerTitle').html(dataspec.name)
+            // set event handler for buttons.
+            // if another csv is loaded in dynamically and buttons are rebuilt:
+            $('.column-select').off('click');
+            $('.column-select').on('click', function (a) { boxplot(a.target.id) });
+
         }
-
-        // set event handler for buttons.
-        // if another csv is loaded in dynamically and buttons are rebuilt:
-        $('.column-select').off('click');
-        $('.column-select').on('click', function (a) { boxplot(a.target.id) });
-
-    }
-);
+    )
+}
 
 function boxplot (numericColumn) {
     var plotDetails = {
@@ -106,3 +119,6 @@ function boxplot (numericColumn) {
         }
     );
 };
+
+// initialize with functional dataset.
+$(document).ready(function () { loadData(datafiles[1]) } );
