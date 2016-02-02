@@ -13,6 +13,7 @@ var datafiles = [
 
 // global var to hold parsed CSV data
 var parsedCSVData = null;
+var groupedCSVData = null;
 
 // create a button with name and id from user.
 // used to create buttons to plot columns in CSV file.
@@ -47,6 +48,9 @@ Papa.parsePromise = function(file) {
     });
 };
 
+var plottingFunction = null;
+var currentlyPlottedCol = '';
+
 // perform the paring and set up the buttons for plotting
 // columns
 function loadData (dataspec) {
@@ -71,20 +75,23 @@ function loadData (dataspec) {
             // set event handler for buttons.
             // if another csv is loaded in dynamically and buttons are rebuilt:
             $('.column-select').off('click');
-            $('.column-select').on('click', function (a) { boxplot(a.target.id) });
+            $('.column-select').on('click', function (a) { currentlyPlottedCol = a.target.id; plottingFunction(a.target.id) });
 
         }
     )
 }
 
 function boxplot (numericColumn) {
+
     var plotDetails = {
         x: Array(),
         y: Array(),
+        text: Array(),
         name: numericColumn,
         type: 'box',
         jitter: 0.25,
         whiskerwidth: 0.2,
+        hoverinfo: 'all',
         color: 'scan',
         marker: {
           //color: 'rgba(128,128,128,0.75)',
@@ -97,7 +104,8 @@ function boxplot (numericColumn) {
     _.each(parsedCSVData,
         function (a) {
             plotDetails.x.push(a.scan),
-            plotDetails.y.push(eval('a.'+numericColumn))
+            plotDetails.y.push(a[numericColumn]),
+            plotDetails.text.push(a.subject)
         }
     );
 
@@ -114,11 +122,80 @@ function boxplot (numericColumn) {
             showlegend: false,
             yaxis: {
                 title: numericColumn,
-                zeroline: false
+                zeroline: false,
+                mirror: 'ticks'
             },
+            xaxis: {
+                mirror: 'ticks'
+            }
         }
     );
 };
 
+function scatterplot (numericColumn) {
+
+    toBePlotted = Array();
+
+    groupedCSVData = _.groupBy(parsedCSVData, function (a) { return a.scan });
+
+    _.each(groupedCSVData,
+        function (a, scan_name) {
+            perScan = {
+                x: Array(),
+                y: Array(),
+                text: Array(),
+                type: 'scatter',
+                mode: 'markers',
+                hoverinfo: 'text+name+y',
+                marker: { size: 7, opacity: 0.50 },
+                name: scan_name
+            };
+            _.each(a, function(ele, ind) {
+                perScan.x.push(ele.subject);
+                perScan.y.push(ele[numericColumn]);
+                perScan.text.push(ele.subject);
+            });
+            toBePlotted.push(perScan);
+        }
+    );
+
+    // do the work...
+    Plotly.newPlot('plotContainer', toBePlotted,
+        {
+            static: false,
+            margin: {t: 40},
+            title: numericColumn,
+            paper_bgcolor: 'rgb(243, 243, 243)',
+            plot_bgcolor: 'rgb(243, 243, 243)',
+            height: 575,
+            showlegend: true,
+            hovermode: 'closest',
+            xaxis: {
+                autorange: true,
+                mirror: 'ticks',
+                showgrid: true,
+                zeroline: false,
+                showline: true,
+                autotick: true,
+                ticks: '',
+                showticklabels: false
+            },
+            yaxis: {
+                mirror: 'ticks',
+                showline: true,
+                showgrid: true
+            }
+        }
+    );
+};
+
+plottingFunction = boxplot;
+
 // initialize with functional dataset.
-$(document).ready(function () { loadData(datafiles[1]) } );
+$(document).ready(function () {
+    loadData(datafiles[1]);
+    $('.plot-select').on('click', function (a) {
+        plottingFunction = (a.target.id == 'plot-type-box' ? boxplot : scatterplot);
+        plottingFunction(currentlyPlottedCol);
+    })
+ } );
