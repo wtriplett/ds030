@@ -19,6 +19,7 @@ The /derivaties folder contains summary information that reflects the data and i
 3. physio_plots/ - Folder contains a plot of the physiological recording trace for the Breath Hold and Resting State functional scans. For the BHT, the instructional cue timings are represented by shaded background.
 4. event_plots/ - Simple plots of the function task events files. The x-axis is always time (onset), and the y-axis can be task-specific. Also intended as a quick reference or summary.
 5. mriqcp/ - Output of the current version (as of 27 Jan 2016) of MRIQCP (MRI Quality Control Protocol: https://github.com/poldracklab/mriqc). Included are numeric results of anatomical and functional protocols as well as single subject results plotted against group distribution.
+6. data_browser/ - a rudimentary data visualization for MRIQP (see: http://wtriplett.github.io/ds030/)
 
 ## Scan-specific Notes
 
