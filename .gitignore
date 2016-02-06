@@ -1,7 +1,7 @@
 *.nii.gz
 *.tsv.gz
 *.gz
-derivatives/mriqcp/*/*.pdf
+derivatives/mriqcp*/*/*.pdf
 derivatives/event_plots
 derivatives/physio_plots
 
