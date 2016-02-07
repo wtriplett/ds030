@@ -3,11 +3,11 @@
 var datafiles = [
     {
         name: 'DS030 - Anatomical MRI QC Results',
-        location: 'https://cdn.rawgit.com/wtriplett/ds030/R1.0.0/derivatives/mriqcp/aMRIQC_compiled.csv'
+        location: 'https://cdn.rawgit.com/wtriplett/ds030/experimental/derivatives/mriqcp_3b4ae89/aMRIQC.csv'
     },
     {
         name: 'DS030 - Functional MRI QC Results',
-        location: 'https://cdn.rawgit.com/wtriplett/ds030/R1.0.0/derivatives/mriqcp/fMRIQC_compiled.csv'
+        location: 'https://cdn.rawgit.com/wtriplett/ds030/experimental/derivatives/mriqcp_3b4ae89/fMRIQC.csv'
     }
 ];
 
