@@ -66,7 +66,7 @@ function loadData (dataspec) {
             $('#buttons').empty();
             // populate nav bar w/ column names
             for (i = 0; i < names.length; i++) {
-                if (['subject', 'scan', 'session'].indexOf(names[i]) != -1)
+                if (['subject', 'scan', 'session', ''].indexOf(names[i]) != -1)
                     continue;
                 $('#buttons').append(makeButton(names[i]));
             }
