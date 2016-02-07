@@ -76,7 +76,6 @@ function loadData (dataspec) {
             // if another csv is loaded in dynamically and buttons are rebuilt:
             $('.column-select').off('click');
             $('.column-select').on('click', function (a) { currentlyPlottedCol = a.target.id; plottingFunction(a.target.id) });
-
         }
     )
 }
@@ -114,7 +113,7 @@ function boxplot (numericColumn) {
         {
             static: true,
             boxmode: 'group',
-            margin: {t: 40, b:20},
+            margin: {t: 40, b:25},
             title: numericColumn,
             paper_bgcolor: 'rgb(243, 243, 243)',
             plot_bgcolor: 'rgb(243, 243, 243)',
@@ -136,66 +135,82 @@ function scatterplot (numericColumn) {
 
     toBePlotted = Array();
 
-    groupedCSVData = _.groupBy(parsedCSVData, function (a) { return a.scan });
-
-    _.each(groupedCSVData,
-        function (a, scan_name) {
-            perScan = {
-                x: Array(),
-                y: Array(),
-                text: Array(),
-                type: 'scatter',
-                mode: 'markers',
-                hoverinfo: 'text+name+y',
-                marker: { size: 7, opacity: 0.50 },
-                name: scan_name
-            };
-            _.each(a, function(ele, ind) {
-                perScan.x.push(ele.subject);
-                perScan.y.push(ele[numericColumn]);
-                perScan.text.push(ele.subject);
-            });
-            toBePlotted.push(perScan);
+    layoutBits = {
+        static: false,
+        margin: {t: 40},
+        title: numericColumn,
+        paper_bgcolor: 'rgb(255, 255, 255)',
+        plot_bgcolor: 'rgb(243, 243, 243)',
+        height: 575,
+        showlegend: true,
+        hovermode: 'closest',
+        yaxis: {
+            mirror: 'ticks',
+            showline: false,
+            title: numericColumn,
+            showgrid: true
+        },
+        xaxis: {
+            autorange: true,
+            mirror: 'ticks',
+            showgrid: true,
+            zeroline: false,
+            showline: true,
+            autotick: true,
+            ticks: '',
+            showticklabels: false
         }
-    );
+    };
+
+    groupedCSVData = _.groupBy(parsedCSVData, function (a) { return a.scan });
+    scan_names = Object.keys(groupedCSVData);
+    subplt_coverage = 1/scan_names.length;
+    // each iteration defines a subplot subdivision of the x-axis using the
+    // same y-axis. See: https://plot.ly/javascript/subplots/
+    for (n = 1; n<=scan_names.length; n++) {
+        scan_name = scan_names[n-1]
+        x_ind = (n == 1) ? '' : n; // first axis should have no numeric suffix
+
+        domain = [ // normalized [0, 1] region of overall plot window to devote to this subplt
+            (n-1)*subplt_coverage,
+            (n)*subplt_coverage
+        ]
+        layoutBits['xaxis'+x_ind] = { domain: domain }
+
+        perScan = {
+            x: Array(),
+            y: Array(),
+            text: Array(),
+            type: 'scatter',
+            mode: 'markers',
+            hoverinfo: 'text+name+y',
+            xaxis: 'x'+x_ind,
+            yaxis: 'y',
+            marker: { size: 6, opacity: 0.50 },
+            name: scan_name
+        };
+        for (e=0; e < groupedCSVData[scan_name].length; e++) {
+            // TODO: cache this
+            perScan.x.push(groupedCSVData[scan_name][e].subject);
+            perScan.y.push(groupedCSVData[scan_name][e][numericColumn]);
+            perScan.text.push(groupedCSVData[scan_name][e].subject);
+        }
+        toBePlotted.push(perScan);
+    }
 
     // do the work...
-    Plotly.newPlot('plotContainer', toBePlotted,
-        {
-            static: false,
-            margin: {t: 40},
-            title: numericColumn,
-            paper_bgcolor: 'rgb(243, 243, 243)',
-            plot_bgcolor: 'rgb(243, 243, 243)',
-            height: 575,
-            showlegend: true,
-            hovermode: 'closest',
-            xaxis: {
-                autorange: true,
-                mirror: 'ticks',
-                showgrid: true,
-                zeroline: false,
-                showline: true,
-                autotick: true,
-                ticks: '',
-                showticklabels: false
-            },
-            yaxis: {
-                mirror: 'ticks',
-                showline: true,
-                showgrid: true
-            }
-        }
-    );
+    Plotly.newPlot('plotContainer', toBePlotted, layoutBits);
 };
 
 plottingFunction = boxplot;
 
 // initialize with functional dataset.
 $(document).ready(function () {
-    loadData(datafiles[1]);
+    loadData(datafiles[0]);
     $('.plot-select').on('click', function (a) {
         plottingFunction = (a.target.id == 'plot-type-box' ? boxplot : scatterplot);
         plottingFunction(currentlyPlottedCol);
     })
- } );
+    $('#loadAnatomical').on('click', function (a) { loadData(datafiles[0]); Plotly.newPlot('plotContainer',[]) });
+    $('#loadFunctional').on('click', function (a) { loadData(datafiles[1]); Plotly.newPlot('plotContainer',[]) });
+ });
